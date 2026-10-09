@@ -9,16 +9,16 @@ import java.util.*;
 
 import static com.ispusulam.Yardimci.*;
 
-/** İşverenin ilan yazarken kullandığı yapay zekâ desteği (DeepSeek). */
+/** İşverenin ilan yazarken kullandığı yapay zekâ desteği. */
 @RestController
 @RequestMapping("/api/ai")
 public class AiController {
     private final JdbcTemplate jdbc;
     private final Oturum oturum;
-    private final DeepSeekServisi yapayZeka;
+    private final YapayZekaServisi yapayZeka;
     private final BeceriServisi beceriServisi;
 
-    public AiController(JdbcTemplate jdbc, Oturum oturum, DeepSeekServisi yapayZeka, BeceriServisi beceriServisi) {
+    public AiController(JdbcTemplate jdbc, Oturum oturum, YapayZekaServisi yapayZeka, BeceriServisi beceriServisi) {
         this.jdbc = jdbc; this.oturum = oturum; this.yapayZeka = yapayZeka; this.beceriServisi = beceriServisi;
     }
 
@@ -36,7 +36,7 @@ public class AiController {
             return c;
         }
         try {
-            JsonNode ai = yapayZeka.sor("Yanıtı SADECE json olarak ver: {\"cevap\": \"tamam\"}", "Test", 50);
+            JsonNode ai = yapayZeka.sor("Yanıtı SADECE json olarak ver: {\"cevap\": \"tamam\"}", "Test", 300);
             c.put("calisiyor", true);
             c.put("mesaj", "Yapay zekâ çalışıyor: " + ai.path("cevap").asText("?"));
         } catch (ResponseStatusException e) {

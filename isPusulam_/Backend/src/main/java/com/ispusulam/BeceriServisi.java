@@ -17,9 +17,9 @@ import java.util.Map;
 @Component
 public class BeceriServisi {
     private final JdbcTemplate jdbc;
-    private final DeepSeekServisi yapayZeka;
+    private final YapayZekaServisi yapayZeka;
 
-    public BeceriServisi(JdbcTemplate jdbc, DeepSeekServisi yapayZeka) {
+    public BeceriServisi(JdbcTemplate jdbc, YapayZekaServisi yapayZeka) {
         this.jdbc = jdbc;
         this.yapayZeka = yapayZeka;
     }
@@ -52,7 +52,7 @@ public class BeceriServisi {
                         "{\"gecerli\": true/false, \"ad\": \"en yaygın doğru yazımı, en fazla 40 karakter\", " +
                         "\"kategori\": \"Yazılım | Veri | Yapay Zekâ | DevOps | Tasarım | Mobil | Güvenlik | Ofis | Dil | İş & Yönetim | Pazarlama | Diğer\", " +
                         "\"neden\": \"geçersizse kısa Türkçe açıklama\"}",
-                        "Beceri: " + ad, 300);
+                        "Beceri: " + ad, 600);
                 if (!ai.path("gecerli").asBoolean(true)) {
                     String neden = ai.path("neden").asText("");
                     throw Yardimci.hata(HttpStatus.BAD_REQUEST,

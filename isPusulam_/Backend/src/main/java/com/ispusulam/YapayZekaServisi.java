@@ -16,35 +16,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * DeepSeek yapay zekâsını çağırır.
- * DeepSeek API'si OpenAI ile aynı formatı kullanır:
- *   POST https://api.deepseek.com/chat/completions
+ * Yapay zekâ servisini çağırır. Hangi sağlayıcı kullanılacağı application.properties'ten seçilir
+ * (ai.base-url ve ai.model). OpenAI uyumlu her servisle çalışır: Groq, DeepSeek, Gemini...
+ *   POST <ai.base-url>/chat/completions
  *   Başlık : Authorization: Bearer <API_ANAHTARI>
  *   Gövde  : { "model": "...", "messages": [ ... ] }
  *   Cevap  : choices[0].message.content
  *
- * NEDEN ÇALIŞMIYORDU?
- *  - Güncel DeepSeek modellerinde "düşünme modu" (thinking) VARSAYILAN olarak AÇIK. Model önce uzun uzun düşünüp
- *    sonra cevap veriyor; bu 60 saniyeyi rahatça aşıyordu -> sunucu "Read timed out" alıp hata dönüyordu,
- *    Flutter da 70 sn sonra "Sunucuya bağlanılamadı" diyordu. Artık thinking kapalı gönderiliyor (hızlı cevap).
- *  - Model bazen JSON'u ```json ... ``` içine sarıyor; bu durumda json.readTree patlıyordu. Artık temizleniyor.
- *  - Hata mesajları anlaşılmazdı (401 = anahtar yanlış, 402 = bakiye yok). Artık Türkçe ve net.
+ * Notlar:
+ *  - DeepSeek'te "düşünme modu" (thinking) varsayılan açık ve cevaplar 60 sn'yi aşıyordu; DeepSeek kullanılırsa kapatılır.
+ *  - Groq'taki gpt-oss modellerinde düşünme kısa tutulur (reasoning_effort = low): hızlı cevap, az token.
+ *  - Model bazen JSON'u ```json ... ``` içine sarıyor; temizlenip çözülür.
+ *  - Hata kodları (401 anahtar yanlış, 402 bakiye yok, 429 çok istek) Türkçe ve net mesajlara çevrilir.
  *
  * API anahtarı sadece burada (sunucuda) durur, Flutter uygulamasına ASLA koyma.
- * Anahtar önce DEEPSEEK_API_KEY ortam değişkeninden, yoksa application.properties'ten okunur.
+ * Anahtar önce AI_API_KEY ortam değişkeninden, yoksa application.properties'teki ai.api-key'den okunur.
  */
 @Service
-public class DeepSeekServisi {
+public class YapayZekaServisi {
     private final RestClient istemci;
     private final String model;
     private final String anahtar;
+    private final boolean deepseekMi; // "thinking" ayarı sadece DeepSeek'te var; diğer servislere gönderilmez
     private final ObjectMapper json = new ObjectMapper();
 
-       public DeepSeekServisi(@Value("${DEEPSEEK_API_KEY:${deepseek.api-key:}}") String anahtar,
-                           @Value("${deepseek.base-url:https://api.deepseek.com}") String adres,
-                           @Value("${deepseek.model:deepseek-flash}") String model) {
+    public YapayZekaServisi(@Value("${AI_API_KEY:${ai.api-key:}}") String anahtar,
+                            @Value("${ai.base-url:https://api.groq.com/openai/v1}") String adres,
+                            @Value("${ai.model:openai/gpt-oss-120b}") String model) {
         this.anahtar = anahtar == null ? "" : anahtar.trim();
         this.model = model;
+        this.deepseekMi = adres.contains("deepseek");
         SimpleClientHttpRequestFactory ayar = new SimpleClientHttpRequestFactory();
         ayar.setConnectTimeout(15_000);
         ayar.setReadTimeout(90_000);   // uzun sınav soruları üretirken 90 sn'ye kadar bekle
@@ -68,13 +69,13 @@ public class DeepSeekServisi {
 
     /**
      * Yapay zekâya soru sorar ve cevabı JSON olarak döndürür.
-    * Prompt içinde "json" kelimesi geçmeli; sistem mesajında açıkça istiyoruz.
+     * Prompt içinde "json" kelimesi geçmeli; sistem mesajında açıkça istiyoruz.
      * @param maksimumToken cevabın en fazla uzunluğu (10 soruluk sınav gibi uzun cevaplarda artır)
      */
     public JsonNode sor(String sistemMesaji, String kullaniciMesaji, int maksimumToken) {
         if (!anahtarVar())
             throw Yardimci.hata(HttpStatus.SERVICE_UNAVAILABLE,
-                    "DeepSeek API anahtarı yok. DEEPSEEK_API_KEY ortam değişkenine veya application.properties dosyasına anahtarını yaz.");
+                    "Yapay zekâ API anahtarı yok. application.properties dosyasındaki ai.api-key satırına anahtarını yaz.");
 
         Map<String, Object> govde = new HashMap<>();
         govde.put("model", model);
@@ -82,7 +83,8 @@ public class DeepSeekServisi {
                 Map.of("role", "system", "content", sistemMesaji),
                 Map.of("role", "user", "content", kullaniciMesaji)));
         govde.put("response_format", Map.of("type", "json_object"));   // cevap düzgün JSON gelsin
-        govde.put("thinking", Map.of("type", "disabled"));               // ÖNEMLİ: düşünme modu kapalı = hızlı cevap
+        if (deepseekMi) govde.put("thinking", Map.of("type", "disabled")); // ÖNEMLİ: düşünme modu kapalı = hızlı cevap
+        if (model.contains("gpt-oss")) govde.put("reasoning_effort", "low"); // Groq gpt-oss: kısa düşünsün, hızlı ve az token
         govde.put("max_tokens", maksimumToken);
         govde.put("temperature", 0.7);
         govde.put("stream", false);
@@ -94,36 +96,37 @@ public class DeepSeekServisi {
                     .body(govde)
                     .retrieve()
                     .body(String.class);
- } catch (HttpStatusCodeException e) {
+        } catch (HttpStatusCodeException e) {
             int kod = e.getStatusCode().value();
             String neden = switch (kod) {
-                case 400 -> "DeepSeek isteği reddetti (400). deepseek.model = " + model + " doğru mu? Ayrıntı: " + kisalt(e.getResponseBodyAsString());
-                case 401 -> "DeepSeek API anahtarı geçersiz (401). platform.deepseek.com'dan yeni anahtar alıp yaz.";
-                case 402 -> "DeepSeek hesabında bakiye yok (402). platform.deepseek.com'dan bakiye yükle.";
-                case 422 -> "DeepSeek isteği anlayamadı (422): " + kisalt(e.getResponseBodyAsString());
-                case 429 -> "Çok fazla istek gönderildi (429). Birkaç saniye sonra tekrar dene.";
-                case 500, 502, 503 -> "DeepSeek şu an yoğun/arızalı (" + kod + "). Biraz sonra tekrar dene.";
+                case 400 -> "Yapay zekâ servisi isteği reddetti (400). ai.model = " + model + " doğru mu? Ayrıntı: " + kisalt(e.getResponseBodyAsString());
+                case 401 -> "Yapay zekâ API anahtarı geçersiz (401). Yeni anahtar alıp ai.api-key satırına yaz.";
+                case 402 -> "Yapay zekâ hesabında bakiye yok (402).";
+                case 422 -> "Yapay zekâ servisi isteği anlayamadı (422): " + kisalt(e.getResponseBodyAsString());
+                case 429 -> "Çok fazla istek gönderildi (429). Ücretsiz kotada dakikalık sınır var; bir dakika bekleyip tekrar dene.";
+                case 500, 502, 503 -> "Yapay zekâ servisi şu an yoğun/arızalı (" + kod + "). Biraz sonra tekrar dene.";
                 default -> "Yapay zekâ hatası (" + kod + "): " + kisalt(e.getResponseBodyAsString());
             };
-            System.err.println("[DeepSeek] " + kod + " " + e.getResponseBodyAsString());
+            System.err.println("[YapayZeka] " + kod + " " + e.getResponseBodyAsString());
             throw Yardimci.hata(HttpStatus.BAD_GATEWAY, neden);
         } catch (ResourceAccessException e) {
-            System.err.println("[DeepSeek] bağlantı hatası: " + e.getMessage());
+            System.err.println("[YapayZeka] bağlantı hatası: " + e.getMessage());
             throw Yardimci.hata(HttpStatus.GATEWAY_TIMEOUT,
                     "Yapay zekâ servisine ulaşılamadı veya cevap çok uzun sürdü. İnternet bağlantını kontrol edip tekrar dene.");
         } catch (Exception e) {
-            System.err.println("[DeepSeek] beklenmeyen hata: " + e);
+            System.err.println("[YapayZeka] beklenmeyen hata: " + e);
             throw Yardimci.hata(HttpStatus.BAD_GATEWAY, "Yapay zekâ servisine ulaşılamadı: " + e.getMessage());
         }
 
         try {
             JsonNode mesaj = json.readTree(ham).path("choices").path(0).path("message");
             String icerik = mesaj.path("content").asText("");
-            // Thinking yine de açık kalırsa cevap reasoning_content'te kalabilir
+            // Bazı servislerde cevap düşünme alanında kalabilir
             if (icerik.isBlank()) icerik = mesaj.path("reasoning_content").asText("");
+            if (icerik.isBlank()) icerik = mesaj.path("reasoning").asText("");
             return jsonCikar(icerik);
         } catch (Exception e) {
-            System.err.println("[DeepSeek] JSON çözülemedi. Ham cevap: " + kisalt(ham));
+            System.err.println("[YapayZeka] JSON çözülemedi. Ham cevap: " + kisalt(ham));
             throw Yardimci.hata(HttpStatus.BAD_GATEWAY, "Yapay zekâ beklenen formatta cevap vermedi, tekrar dene.");
         }
     }

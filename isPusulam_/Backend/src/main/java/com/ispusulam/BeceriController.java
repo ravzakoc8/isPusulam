@@ -17,7 +17,7 @@ import static com.ispusulam.Yardimci.*;
  * KURAL (tablolarını değiştirmemek için):
  *  - Test sorusu çoktan seçmeli ise soru_metni şöyle yazılır:  "Soru metni\nA) şık\nB) şık\nC) şık"  ve dogru_cevap = 'A'
  *  - Soru metninde "\nA)" YOKSA bu bir "Yetenek Görevi"dir (açık uçlu). dogru_cevap alanına değerlendirme ölçütü yazılır,
- *    adayın cevabını DeepSeek bu ölçüte göre puanlar.
+ *    adayın cevabını yapay zekâ bu ölçüte göre puanlar.
  *
  * YENİ: Yapay zekâ ile sınav (/api/sinav/...): aday hangi beceriyi seçerse seçsin (listede olmasa bile),
  * yapay zekâ o beceri ve seviye için istenen sayıda (5/10/15) çoktan seçmeli soru üretir. Her denemede sorular
@@ -30,7 +30,7 @@ public class BeceriController {
     private final JdbcTemplate jdbc;
     private final Oturum oturum;
     private final Bildirimci bildirimci;
-    private final DeepSeekServisi yapayZeka;
+    private final YapayZekaServisi yapayZeka;
     private final BeceriServisi beceriServisi;
     private final ObjectMapper json = new ObjectMapper();
 
@@ -38,7 +38,7 @@ public class BeceriController {
     public static final int VARSAYILAN_BARAJ = 70;
     private static final List<Integer> SORU_SAYILARI = List.of(5, 10, 15);
 
-    public BeceriController(JdbcTemplate jdbc, Oturum oturum, Bildirimci bildirimci, DeepSeekServisi yapayZeka,
+    public BeceriController(JdbcTemplate jdbc, Oturum oturum, Bildirimci bildirimci, YapayZekaServisi yapayZeka,
                             BeceriServisi beceriServisi) {
         this.jdbc = jdbc; this.oturum = oturum; this.bildirimci = bildirimci; this.yapayZeka = yapayZeka;
         this.beceriServisi = beceriServisi;
@@ -404,7 +404,7 @@ public class BeceriController {
         return sonuc;
     }
 
-    /** POST /api/gorevler/{testId}/cevap  {cevap} -> DeepSeek cevabı değerlendirir */
+    /** POST /api/gorevler/{testId}/cevap  {cevap} -> yapay zekâ cevabı değerlendirir */
     @PostMapping("/gorevler/{testId}/cevap")
     public Map<String, Object> gorevCevapla(@RequestHeader(value = "Authorization", required = false) String yetki,
                                             @PathVariable int testId, @RequestBody Map<String, Object> g) {

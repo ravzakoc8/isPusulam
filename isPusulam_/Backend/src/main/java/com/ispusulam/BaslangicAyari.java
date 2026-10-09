@@ -19,9 +19,9 @@ import javax.sql.DataSource;
 public class BaslangicAyari implements CommandLineRunner {
     private final JdbcTemplate jdbc;
     private final DataSource veriKaynagi;
-    private final DeepSeekServisi yapayZeka;
+    private final YapayZekaServisi yapayZeka;
 
-    public BaslangicAyari(JdbcTemplate jdbc, DataSource veriKaynagi, DeepSeekServisi yapayZeka) {
+    public BaslangicAyari(JdbcTemplate jdbc, DataSource veriKaynagi, YapayZekaServisi yapayZeka) {
         this.jdbc = jdbc;
         this.veriKaynagi = veriKaynagi;
         this.yapayZeka = yapayZeka;
@@ -39,7 +39,7 @@ public class BaslangicAyari implements CommandLineRunner {
         if (sayi > 0) System.out.println(sayi + " örnek hesabın şifresi 123456 olarak ayarlandı.");
 
         if (!yapayZeka.anahtarVar())
-            System.out.println("UYARI: DeepSeek API anahtarı yok, yapay zekâ özellikleri çalışmayacak.");
+            System.out.println("UYARI: Yapay zekâ API anahtarı yok (ai.api-key), yapay zekâ özellikleri çalışmayacak.");
         else
             System.out.println("Yapay zekâ hazır (model: " + yapayZeka.modelAdi() + "). Test: GET http://localhost:8080/api/ai/durum");
     }

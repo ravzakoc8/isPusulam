@@ -139,7 +139,7 @@ class _BasvuruKarti extends StatelessWidget {
     }
   }
 
-  /// Kayıtlı AI mülakat sorularını gösterir; hiç yoksa (veya yeniden = true ise) DeepSeek'ten üretir.
+  /// Kayıtlı AI mülakat sorularını gösterir; hiç yoksa (veya yeniden = true ise) yapay zekâdan üretir.
   Future<void> _aiSorular(BuildContext context, {bool yeniden = false}) async {
     showDialog(
         context: context,

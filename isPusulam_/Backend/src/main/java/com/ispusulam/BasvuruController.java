@@ -32,10 +32,10 @@ public class BasvuruController {
     private final Oturum oturum;
     private final Bildirimci bildirimci;
     private final Eslestirici eslestirici;
-    private final DeepSeekServisi yapayZeka;
+    private final YapayZekaServisi yapayZeka;
 
     public BasvuruController(JdbcTemplate jdbc, Oturum oturum, Bildirimci bildirimci, Eslestirici eslestirici,
-            DeepSeekServisi yapayZeka) {
+            YapayZekaServisi yapayZeka) {
         this.jdbc = jdbc;
         this.oturum = oturum;
         this.bildirimci = bildirimci;
@@ -249,9 +249,9 @@ public class BasvuruController {
 
     /**
      * POST /api/basvurular/{id}/ai-sorular {yeniden: false|true}
-     * Daha önce üretilmiş sorular varsa onları döndürür (DeepSeek'e tekrar gitmez,
+     * Daha önce üretilmiş sorular varsa onları döndürür (yapay zekâya tekrar gitmez,
      * aynı sorular birikmez).
-     * yeniden = true gönderilirse eski AI sorularını silip DeepSeek'ten yenilerini
+     * yeniden = true gönderilirse eski AI sorularını silip yapay zekâdan yenilerini
      * ister.
      */
     @PostMapping("/{id}/ai-sorular")

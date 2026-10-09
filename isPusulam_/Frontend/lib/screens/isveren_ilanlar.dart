@@ -243,7 +243,7 @@ class _IlanOlusturState extends State<_IlanOlustur> {
   }
 
   // ---------------- Yapay zekâ ----------------
-  /// DeepSeek'ten iş tanımı, beceriler ve tüm gereksinimleri ister; formu doldurur (işveren sonra düzenleyebilir).
+  /// Yapay zekâdan iş tanımı, beceriler ve tüm gereksinimleri ister; formu doldurur (işveren sonra düzenleyebilir).
   Future<void> _aiOner() async {
     if (_baslik.text.trim().isEmpty) {
       mesaj(context, 'Önce pozisyon başlığını yaz (örn. Backend Developer Stajyeri)', hata: true);
