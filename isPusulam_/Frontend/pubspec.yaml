@@ -1,0 +1,22 @@
+name: ispusulam
+description: işPusulam - öğrenci ve yeni mezunlar için şeffaf kariyer platformu
+publish_to: 'none'
+version: 2.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2                 # backend'e istek atmak için
+  provider: ^6.1.2             # oturum bilgisini ekranlar arasında paylaşmak için
+  shared_preferences: ^2.3.2   # giriş bilgisini tarayıcı/telefonda saklamak için
+  google_fonts: ^6.2.1         # tasarımdaki serif başlık fontu
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

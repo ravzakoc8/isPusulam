@@ -1,0 +1,24 @@
+
+# Bu dosya application.properties gizliliğini korunulduğu için örnek olarak eğer olsaydı böyle olurdu demek için yapıldı
+
+
+
+server.port=8080
+server.error.include-message=always
+
+# ---------- VERİTABANI ----------
+# pgAdmin'de "isPusulam" adında boş bir veritabanı oluştur, kendi şifreni yaz.
+spring.datasource.url=jdbc:postgresql://localhost:5432/isPusulam
+spring.datasource.username=postgres
+spring.datasource.password=BURAYA_KENDI_SIFRENIZ
+
+# ---------- YAPAY ZEKÂ ----------
+# Anahtarı kimseyle paylaşma. Çalışıyor mu? http://localhost:8080/api/ai/durum
+deepseek.api-key=BURAYA_API_ANAHTARI
+deepseek.base-url=https://api.deepseek.com
+deepseek.model=deepseek-flash
+
+# ---------- GİRİŞ TOKEN'I ----------
+# En az 20 karakterlik rastgele bir yazı.
+uygulama.gizli-anahtar=BURAYA_EN_AZ_20_KARAKTER
+
