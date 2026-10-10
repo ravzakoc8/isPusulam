@@ -29,7 +29,7 @@ class _IsverenBasvurularEkraniState extends State<IsverenBasvurularEkrani> {
         Text('Başvurular',
             style: serif(MediaQuery.of(context).size.width >= 700 ? 46 : 34)),
         const SizedBox(height: 6),
-        const Text('Her ret kararında adaya gerekçe iletilir.',
+        const Text('Kabul edilmeyen her adaya gerekçe iletilir.',
             style: TextStyle(color: Renk.soluk)),
         const SizedBox(height: 22),
         Yukle(
@@ -106,7 +106,9 @@ class _BasvuruKarti extends StatelessWidget {
   Future<void> _oneriKabul(BuildContext context) async {
     try {
       await Api.patch('/api/basvurular/${b['basvuru_id']}/mulakat-oneri-kabul');
-      if (context.mounted) mesaj(context, 'Adayın önerdiği tarih kabul edildi, mülakat kesinleşti');
+      if (context.mounted)
+        mesaj(
+            context, 'Adayın önerdiği tarih kabul edildi, mülakat kesinleşti');
       yenile();
     } on ApiHata catch (e) {
       if (context.mounted) mesaj(context, e.mesaj, hata: true);
@@ -132,7 +134,7 @@ class _BasvuruKarti extends StatelessWidget {
     try {
       await Api.patch(
           '/api/basvurular/${b['basvuru_id']}/ret', {'gerekce': gerekce});
-      if (context.mounted) mesaj(context, 'Ret gerekçesi adaya bildirildi');
+      if (context.mounted) mesaj(context, 'Gerekçe adaya bildirildi');
       yenile();
     } on ApiHata catch (e) {
       if (context.mounted) mesaj(context, e.mesaj, hata: true);
@@ -225,25 +227,30 @@ class _BasvuruKarti extends StatelessWidget {
           ]),
         ]),
         const SizedBox(height: 10),
-        Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 4, children: [
-          Text('Başvuru: ${zamanOnce(b['basvuru_tarihi'])}',
-              style: const TextStyle(fontSize: 12, color: Renk.soluk)),
-          const SizedBox(width: 8),
-          TextButton.icon(
-            onPressed: () => mesajlasmaAc(context, kisiId: (b['aday_id'] as num).toInt(), basvuruId: (b['basvuru_id'] as num).toInt()),
-            icon: const Icon(Icons.chat_bubble_outline, size: 18),
-            label: const Text('Mesaj'),
-          ),
-          TextButton.icon(
-            onPressed: () async {
-              try {
-                await adayProfiliAc(context, (b['aday_id'] as num).toInt());
-              } catch (_) {}
-            },
-            icon: const Icon(Icons.person_outline, size: 18),
-            label: const Text('Profili incele'),
-          ),
-        ]),
+        Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 4,
+            children: [
+              Text('Başvuru: ${zamanOnce(b['basvuru_tarihi'])}',
+                  style: const TextStyle(fontSize: 12, color: Renk.soluk)),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                onPressed: () => mesajlasmaAc(context,
+                    kisiId: (b['aday_id'] as num).toInt(),
+                    basvuruId: (b['basvuru_id'] as num).toInt()),
+                icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                label: const Text('Mesaj'),
+              ),
+              TextButton.icon(
+                onPressed: () async {
+                  try {
+                    await adayProfiliAc(context, (b['aday_id'] as num).toInt());
+                  } catch (_) {}
+                },
+                icon: const Icon(Icons.person_outline, size: 18),
+                label: const Text('Profili incele'),
+              ),
+            ]),
         if (durum == 'mulakat_planlandi' && b['mulakat_tarihi'] != null) ...[
           const SizedBox(height: 6),
           Container(
@@ -252,19 +259,34 @@ class _BasvuruKarti extends StatelessWidget {
             decoration: BoxDecoration(
                 color: md == 'aday_itiraz' ? Renk.kilAcik : Renk.adacayi,
                 borderRadius: BorderRadius.circular(12),
-                border: md == 'onaylandi' ? Border.all(color: Renk.adacayiKoyu) : null),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                border: md == 'onaylandi'
+                    ? Border.all(color: Renk.adacayiKoyu)
+                    : null),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Icon(md == 'onaylandi' ? Icons.event_available : (md == 'aday_itiraz' ? Icons.event_busy_outlined : Icons.event_outlined),
-                    size: 18, color: md == 'aday_itiraz' ? Renk.kil : Renk.yesil),
+                Icon(
+                    md == 'onaylandi'
+                        ? Icons.event_available
+                        : (md == 'aday_itiraz'
+                            ? Icons.event_busy_outlined
+                            : Icons.event_outlined),
+                    size: 18,
+                    color: md == 'aday_itiraz' ? Renk.kil : Renk.yesil),
                 const SizedBox(width: 8),
                 Expanded(
                     child: Text('Mülakat: ${tarihSaat(b['mulakat_tarihi'])}',
-                        style: TextStyle(fontSize: 13, fontWeight: md == 'onaylandi' ? FontWeight.w700 : FontWeight.w400))),
+                        style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: md == 'onaylandi'
+                                ? FontWeight.w700
+                                : FontWeight.w400))),
                 Etiket(
                     md == 'onaylandi'
                         ? 'Onaylandı'
-                        : (md == 'aday_itiraz' ? 'Aday itiraz etti' : 'Aday onayı bekleniyor'),
+                        : (md == 'aday_itiraz'
+                            ? 'Aday itiraz etti'
+                            : 'Aday onayı bekleniyor'),
                     ikon: md == 'onaylandi' ? Icons.check : null,
                     zemin: Colors.white,
                     renk: md == 'onaylandi' ? Renk.yesil : Renk.kil),
@@ -272,21 +294,26 @@ class _BasvuruKarti extends StatelessWidget {
               if (md == 'aday_itiraz') ...[
                 const SizedBox(height: 8),
                 if (b['mulakat_itiraz_notu'] != null)
-                  Text('Adayın sebebi: ${b['mulakat_itiraz_notu']}', style: const TextStyle(fontSize: 13, height: 1.4)),
+                  Text('Adayın sebebi: ${b['mulakat_itiraz_notu']}',
+                      style: const TextStyle(fontSize: 13, height: 1.4)),
                 if (b['mulakat_onerilen_tarih'] != null)
-                  Text('Adayın önerdiği tarih: ${tarihSaat(b['mulakat_onerilen_tarih'])}',
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                  Text(
+                      'Adayın önerdiği tarih: ${tarihSaat(b['mulakat_onerilen_tarih'])}',
+                      style: const TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 Wrap(spacing: 8, runSpacing: 8, children: [
                   if (b['mulakat_onerilen_tarih'] != null)
                     FilledButton.icon(
-                      style: FilledButton.styleFrom(minimumSize: const Size(0, 36)),
+                      style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 36)),
                       onPressed: () => _oneriKabul(context),
                       icon: const Icon(Icons.check, size: 16),
                       label: const Text('Önerilen tarihi kabul et'),
                     ),
                   OutlinedButton(
-                    style: OutlinedButton.styleFrom(minimumSize: const Size(0, 36)),
+                    style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 36)),
                     onPressed: () => _mulakatPlanla(context),
                     child: const Text('Yeni tarih öner'),
                   ),
@@ -316,10 +343,13 @@ class _BasvuruKarti extends StatelessWidget {
                   child: const Text('Mülakata davet et')),
             if (durum == 'mulakat_planlandi') ...[
               if (md == 'onaylandi')
-                FilledButton(onPressed: () => _kabul(context), child: const Text('Kabul et'))
+                FilledButton(
+                    onPressed: () => _kabul(context),
+                    child: const Text('Kabul et'))
               else
                 const Tooltip(
-                  message: 'Kabul için mülakat tarihinin iki tarafça onaylanması gerekir',
+                  message:
+                      'Kabul için mülakat tarihinin iki tarafça onaylanması gerekir',
                   child: FilledButton(onPressed: null, child: Text('Kabul et')),
                 ),
               OutlinedButton(
@@ -336,7 +366,7 @@ class _BasvuruKarti extends StatelessWidget {
                   foregroundColor: Renk.kil,
                   side: const BorderSide(color: Renk.kil)),
               onPressed: () => _ret(context),
-              child: const Text('Reddet'),
+              child: const Text('Kabul etme'),
             ),
           ]),
         ],

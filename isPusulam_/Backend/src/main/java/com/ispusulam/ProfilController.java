@@ -39,7 +39,7 @@ public class ProfilController {
 
         Map<String, Object> p = jdbc.queryForList(
                 "SELECT k.kullanici_id, k.ad, k.soyad, k.eposta, k.telefon, k.kullanici_tipi, k.profil_gizliligi, " +
-                        "a.unvan, a.biyografi, a.mevcut_durum, " +
+                        "a.unvan, a.biyografi, a.mevcut_durum, a.github_url, " +
                         "(SELECT dosya_url FROM cv WHERE aday_id = k.kullanici_id ORDER BY cv_id DESC LIMIT 1) AS cv_url "
                         +
                         "FROM kullanicilar k LEFT JOIN adaylar a ON a.aday_id = k.kullanici_id WHERE k.kullanici_id = ?",
@@ -67,7 +67,7 @@ public class ProfilController {
     }
 
     /**
-     * PUT /api/profil -> unvan, biyografi, telefon ve CV bağlantısını günceller.
+     * PUT /api/profil -> unvan, biyografi, telefon, CV bağlantısı ve GitHub bağlantısını günceller.
      */
     @PutMapping
     public Map<String, Object> guncelle(@RequestHeader(value = "Authorization", required = false) String yetki,
@@ -77,8 +77,14 @@ public class ProfilController {
                 metin(g, "biyografi"), id);
         jdbc.update("UPDATE kullanicilar SET telefon = ? WHERE kullanici_id = ?", metin(g, "telefon"), id);
 
+        // GitHub: boş bırakılırsa silinir; doluysa github.com adresi olmalı
+        String github = linkDuzelt(metin(g, "github_url"), "GitHub");
+        if (github != null && !github.toLowerCase().contains("github.com/"))
+            throw hata(HttpStatus.BAD_REQUEST, "GitHub bağlantısı github.com/kullaniciadi biçiminde olmalı");
+        jdbc.update("UPDATE adaylar SET github_url = ? WHERE aday_id = ?", github, id);
+
         // CV: cv tablosunda kayıt varsa güncelle, yoksa ekle
-        String cvUrl = metin(g, "cv_url");
+        String cvUrl = linkDuzelt(metin(g, "cv_url"), "CV");
         if (cvUrl != null) {
             List<Integer> cvler = jdbc.queryForList(
                     "SELECT cv_id FROM cv WHERE aday_id = ? ORDER BY cv_id DESC LIMIT 1", Integer.class, id);
@@ -111,7 +117,7 @@ public class ProfilController {
             @PathVariable int adayId) {
         int isverenId = oturum.isverenId(yetki);
         List<Map<String, Object>> l = jdbc.queryForList(
-                "SELECT k.kullanici_id, k.ad, k.soyad, k.profil_gizliligi, a.unvan, a.biyografi, " +
+                "SELECT k.kullanici_id, k.ad, k.soyad, k.profil_gizliligi, a.unvan, a.biyografi, a.github_url, " +
                         "(SELECT dosya_url FROM cv WHERE aday_id = k.kullanici_id ORDER BY cv_id DESC LIMIT 1) AS cv_url "
                         +
                         "FROM kullanicilar k JOIN adaylar a ON a.aday_id = k.kullanici_id WHERE k.kullanici_id = ?",
@@ -135,6 +141,15 @@ public class ProfilController {
         p.remove("profil_gizliligi");
         p.put("becerileri", becerileri(adayId));
         return p;
+    }
+
+    /** Başına https:// eksikse ekler; boşluk içeren veya çok uzun linkleri reddeder. Boşsa null döner. */
+    private static String linkDuzelt(String link, String ad) {
+        if (link == null) return null;
+        if (link.contains(" ")) throw hata(HttpStatus.BAD_REQUEST, ad + " bağlantısında boşluk olamaz");
+        if (!link.startsWith("http://") && !link.startsWith("https://")) link = "https://" + link;
+        if (link.length() > 255) throw hata(HttpStatus.BAD_REQUEST, ad + " bağlantısı çok uzun");
+        return link;
     }
 
     private boolean dogrulanmisIsverenMi(int isverenId) {

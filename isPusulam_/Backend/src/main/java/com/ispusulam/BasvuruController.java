@@ -231,7 +231,7 @@ public class BasvuruController {
     public void ret(@RequestHeader(value = "Authorization", required = false) String yetki,
             @PathVariable int id, @RequestBody Map<String, Object> g) {
         Map<String, Object> b = isverenBasvurusu(oturum.isverenId(yetki), id);
-        String gerekce = zorunlu(g, "gerekce", "Ret gerekçesi zorunludur");
+        String gerekce = zorunlu(g, "gerekce", "Gerekçe yazmak zorunludur");
         if (gerekce.length() < 10)
             throw hata(HttpStatus.BAD_REQUEST, "Gerekçe en az 10 karakter olmalı");
         if (!"basvuruldu".equals(b.get("durum")) && !"mulakat_planlandi".equals(b.get("durum")))

@@ -55,3 +55,6 @@ CREATE TABLE IF NOT EXISTS sinav_oturumlari (
 
 -- 5) Kullanıcının/işverenin yazdığı, yapay zekânın kontrol edip eklediği beceriler
 ALTER TABLE beceriler ADD COLUMN IF NOT EXISTS ai_ile_eklendi BOOLEAN DEFAULT FALSE;
+
+-- 6) Aday profilinde GitHub bağlantısı (CV bağlantısı zaten cv tablosunda)
+ALTER TABLE adaylar ADD COLUMN IF NOT EXISTS github_url VARCHAR(255);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/api.dart';
 import '../core/tema.dart';
 import '../widgets/bilesenler.dart';
@@ -62,7 +63,7 @@ class _Form extends StatefulWidget {
 }
 
 class _FormState extends State<_Form> {
-  late final TextEditingController _unvan, _bio, _telefon, _cv;
+  late final TextEditingController _unvan, _bio, _telefon, _cv, _github;
   bool _bekliyor = false;
 
   @override
@@ -73,6 +74,7 @@ class _FormState extends State<_Form> {
     _bio = TextEditingController(text: p['biyografi'] ?? '');
     _telefon = TextEditingController(text: p['telefon'] ?? '');
     _cv = TextEditingController(text: p['cv_url'] ?? '');
+    _github = TextEditingController(text: p['github_url'] ?? '');
   }
 
   Future<void> _kaydet() async {
@@ -82,7 +84,8 @@ class _FormState extends State<_Form> {
         'unvan': _unvan.text,
         'biyografi': _bio.text,
         'telefon': _telefon.text,
-        'cv_url': _cv.text
+        'cv_url': _cv.text,
+        'github_url': _github.text,
       });
       if (!mounted) return;
       Navigator.pop(context);
@@ -136,9 +139,21 @@ class _FormState extends State<_Form> {
             TextField(
               controller: _cv,
               decoration: const InputDecoration(
-                  labelText: 'CV bağlantısı (Drive, LinkedIn vb.)',
+                  labelText: 'CV (PDF) bağlantısı',
+                  prefixIcon: Icon(Icons.description_outlined, size: 20),
+                  hintText: 'https://drive.google.com/...',
                   helperText:
-                      'Beceri sınavlarına girmek için CV bağlantısı gerekir'),
+                      'CV PDF\'ini Google Drive\'a yükle, "bağlantıya sahip herkes görüntüleyebilir" yapıp linki yapıştır.\nBeceri sınavlarına girmek için gerekir.',
+                  helperMaxLines: 3),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _github,
+              decoration: const InputDecoration(
+                  labelText: 'GitHub profili (isteğe bağlı)',
+                  prefixIcon: Icon(Icons.code, size: 20),
+                  hintText: 'https://github.com/kullaniciadi',
+                  helperText: 'İşverenler projelerini görebilir'),
             ),
             const SizedBox(height: 18),
             Text('Becerilerin', style: serif(18)),
@@ -198,17 +213,12 @@ Future<void> adayProfiliAc(BuildContext context, int adayId) {
                       const SizedBox(height: 16),
                       Text(p['biyografi'], style: const TextStyle(height: 1.5)),
                     ],
-                    if (p['cv_url'] != null) ...[
+                    if (p['cv_url'] != null || p['github_url'] != null)
                       const SizedBox(height: 12),
-                      Row(children: [
-                        const Icon(Icons.description_outlined,
-                            size: 18, color: Renk.soluk),
-                        const SizedBox(width: 8),
-                        Expanded(
-                            child: SelectableText('CV: ${p['cv_url']}',
-                                style: const TextStyle(fontSize: 13))),
-                      ]),
-                    ],
+                    if (p['cv_url'] != null)
+                      _Baglanti(ikon: Icons.description_outlined, etiket: 'CV', adres: '${p['cv_url']}'),
+                    if (p['github_url'] != null)
+                      _Baglanti(ikon: Icons.code, etiket: 'GitHub', adres: '${p['github_url']}'),
                     const SizedBox(height: 18),
                     Text('Beceriler', style: serif(18)),
                     const SizedBox(height: 8),
@@ -223,4 +233,33 @@ Future<void> adayProfiliAc(BuildContext context, int adayId) {
       ),
     ),
   );
+}
+
+/// Aday profilindeki bir bağlantı satırı (CV, GitHub). Seçilebilir ve tek tıkla kopyalanabilir.
+class _Baglanti extends StatelessWidget {
+  final IconData ikon;
+  final String etiket, adres;
+  const _Baglanti({required this.ikon, required this.etiket, required this.adres});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(children: [
+        Icon(ikon, size: 18, color: Renk.soluk),
+        const SizedBox(width: 8),
+        Text('$etiket: ', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        Expanded(child: SelectableText(adres, style: const TextStyle(fontSize: 13, color: Renk.yesil))),
+        IconButton(
+          tooltip: 'Bağlantıyı kopyala',
+          visualDensity: VisualDensity.compact,
+          icon: const Icon(Icons.copy, size: 16, color: Renk.soluk),
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: adres));
+            mesaj(context, '$etiket bağlantısı kopyalandı');
+          },
+        ),
+      ]),
+    );
+  }
 }
