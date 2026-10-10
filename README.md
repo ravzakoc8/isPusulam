@@ -27,29 +27,26 @@
 
 | Problem | Adayın yaşadığı | işPusulam'daki karşılığı |
 |---|---|---|
-| **Kanıtlanamayan beceriler** | CV'de "Java biliyorum" yazmak herkes için aynı görünüyor. Deneyimi olmayanın kendini gösterecek yeri yok. | Beceri sınavı ve Yetenek Görevi. Barajı geçen beceri profilde **doğrulanmış** rozetiyle görünür. |
-| **Belirsiz ilanlar** | "Backend Developer" başlıklı, iki satırlık ilanlar. Ne istendiği belli değil. | İlan yayınlamak için en az 80 karakterlik iş tanımı, en az bir beceri, çalışma türü, çalışma şekli, deneyim ve eğitim seçimi **zorunlu**. |
-| **Sessiz retler** | Başvuru yapılıyor, cevap gelmiyor ya da sadece "olumsuz" geliyor. Aday neyi geliştirmesi gerektiğini bilmiyor. | İşveren **gerekçe yazmadan reddedemez.** Gerekçe ve hangi aşamada elendiği adaya bildirim olarak gider. |
+| **Kanıtlanamayan beceriler** | CV'de "Java biliyorum" yazmak herkes için aynı görünüyor. Deneyimi olmayanın kendini gösterecek yeri yok. | Beceri sınavı ve Yetenek Görevi. Barajı geçen beceri profilde doğrulanmı rozetiyle görünür. |
+| **Belirsiz ilanlar** | "Backend Developer" başlıklı, iki satırlık ilanlar. Ne istendiği belli değil. | İlan yayınlamak için en az 80 karakterlik iş tanımı, en az bir beceri, çalışma türü, çalışma şekli, deneyim ve eğitim seçimi zorunlu. |
+| **Sessiz retler** | Başvuru yapılıyor, cevap gelmiyor ya da sadece "olumsuz" geliyor. Aday neyi geliştirmesi gerektiğini bilmiyor. | İşveren gerekçe yazmadan reddedemez. Gerekçe ve hangi aşamada elendiği adaya bildirim olarak gider. |
 
-Bu kuralların hiçbiri sadece arayüzde değil; hepsi **sunucu tarafında** uygulanıyor. Yani API'ye doğrudan istek atan biri de gerekçesiz ret yapamaz ya da eksik ilan yayınlayamaz.
+Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulanıyor. Yani API'ye doğrudan istek atan biri de gerekçesiz ret yapamaz ya da eksik ilan yayınlayamaz.
 
----
+
 
 ## Demo
 
-<!-- Demo GIF'ini docs/demo.gif olarak ekleyin veya aşağıdaki satırı video linkiyle değiştirin -->
-![işPusulam demo](docs/demo.gif)
 
 **Demo videosu:** _[video linki]_
 
-Önerilen demo akışı (yaklaşık 2 dakika):
+**Demo akışı:**
 1. İşveren yalnızca "Backend stajyeri" yazar → yapay zekâ iş tanımını, becerileri, dil/eğitim/deneyim gereksinimlerini doldurur → ilan yayınlanır.
-2. Aday İşler sayfasında ilanı **eşleşme yüzdesiyle** görür ve başvurur.
+2. Aday İşler sayfasında ilanı eşleşme yüzdesiyle görür ve başvurur.
 3. Aday Becerilerim'de Java için 10 soruluk yapay zekâ sınavına girer, barajı geçer → beceri doğrulanır, eşleşme yüzdesi artar.
 4. İşveren mülakat tarihi önerir, aday itiraz edip yeni tarih önerir, işveren kabul eder.
 5. İşveren başka bir adayı reddetmeye çalışır → gerekçe kutusu boş geçilemez → adaya gerekçeli bildirim düşer.
 
----
 
 ## Özellikler
 
@@ -58,10 +55,9 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi **sunucu tarafında** uyg
 - **Eşleşme yüzdesine göre sıralı ilanlar.** Her ilanda adayın profiliyle yüzde kaç örtüştüğü görünür, en uygun ilan en üstte. Arama; başlıkta, şirket adında, açıklamada, konumda, istenen becerilerde ve gereksinimlerde birlikte yapılır.
 - **Yapay zekâ ile beceri sınavı.**
   - 5, 10 veya 15 soru ve başlangıç / orta / ileri seviye seçilir.
-  - Sorular **her denemede yeniden üretilir**, ezberlenemez.
-  - Doğru cevaplar **sadece sunucuda** tutulur, uygulamaya hiç gönderilmez.
-  - Sınavdan önce geçme notu ve kaç doğru gerektiği gösterilir (ör. %70 baraj, 10 soru → 7 doğru).
-  - Süreli (soru başına 1 dk, süre bitince otomatik gönderim) veya serbest tempo.
+  - Sorular her denemede yeniden üretilir, ezberlenemez.
+  - Doğru cevaplar sadece sunucuda tutulur, uygulamaya hiç gönderilmez.
+  - Sınavdan önce geçme notu ve kaç doğru gerektiği gösterilir (örnek: %70 baraj).
   - Sınav sonunda yanlış ve boş bırakılan her soru için doğru cevap ve açıklama gösterilir; eksik kaç doğru olduğu yazılır.
 - **Yetenek Görevleri.** Çoktan seçmeli değil, açık uçlu kısa bir problem. Aday çözümünü yazar, yapay zekâ önceden tanımlanmış değerlendirme ölçütüne göre 0–100 puan ve kısa geri bildirim verir. Deneyimi olmayan aday da yeteneğini gösterebilir.
 - **Listede olmayan beceri ekleme.** Aday "reactjs" yazarsa yapay zekâ bunun gerçek bir beceri olduğunu kontrol eder, "React" olarak düzeltir ve kataloğa ekler. Anlamsız ya da alakasız girişleri reddeder.
