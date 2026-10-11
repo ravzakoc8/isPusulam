@@ -94,7 +94,8 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 
 ### Veritabanı
 
-İlk şemayı ER diyagramıyla tasarladık: <img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/8d1fc008-7171-4065-bfc9-5821c29aa7a8" />
+İlk şemayı ER diyagramıyla tasarladık: <img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/8d1fc008-7171-4065-bfc9-5821c29aa7a8" /> 
+<img src="images/proje.png" width="200">
 
 
  Tablolar: `kullanicilar` (ortak) → `adaylar` / `isverenler` (kalıtım), `beceriler`, `aday_becerileri`, `beceri_testleri`, `test_sorulari`, `cv`, `cv_test_loglari`, `is_ilanlari`, `ilan_kriterleri`, `basvurular`, `mulakatcilar`, `mulakatlar`, `ai_soru_talepleri`, `mulakat_sorulari`. `bildirimler`, `mesajlar`, `ilan_gereksinimleri`, `sinav_oturumlari`.
@@ -143,9 +144,9 @@ isPusulam/
 ### Gereksinimler
 
 - Java 17 ve Maven
-- PostgreSQL (ve isteğe bağlı pgAdmin)
-- Flutter SDK (Dart 3.3 veya üstü)
-- Ücretsiz bir Groq API anahtarı: [console.groq.com](https://console.groq.com) → API Keys (`gsk_` ile başlar)
+- PostgreSQL 
+- Flutter SDK 
+- Ücretsiz bir Groq API anahtarı: https://console.groq.com → API Keys 
 
 ### 1. Veritabanı
 
@@ -260,7 +261,9 @@ Bu yüzden beceri doğrulamak adayın eşleşmesini doğrudan yükseltir.
 **PUSULA**
 
  **Ravza Koç** --> https://github.com/ravzakoc8
+ 
  **Selena Sürücü** --> https://github.com/selenasurucu
+ 
  **Betül Alkan** --> https://github.com/Betul006
 
 
