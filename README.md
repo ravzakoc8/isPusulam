@@ -7,7 +7,7 @@
 
 `Spring Boot 3.4` · `Java 17` · `Flutter` · `PostgreSQL` · `Groq (gpt-oss-120b)`
 
----
+
 
 ## İçindekiler
 
