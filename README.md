@@ -93,9 +93,8 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 | Yapay zekâ | **Groq üzerinde `openai/gpt-oss-120b`** | Ayrıntısı [Yapay zekâ kullanımı](#yapay-zekâ-kullanımı) bölümünde. |
 
 ### Veritabanı
+<img width="400" height="200" alt="image" src="https://github.com/user-attachments/assets/95cfe3ef-f66f-47e4-a2c2-8f917229d596" />
 
-İlk şemayı ER diyagramıyla tasarladık: <img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/8d1fc008-7171-4065-bfc9-5821c29aa7a8" /> 
-<img src="images/proje.png" width="200">
 
 
  Tablolar: `kullanicilar` (ortak) → `adaylar` / `isverenler` (kalıtım), `beceriler`, `aday_becerileri`, `beceri_testleri`, `test_sorulari`, `cv`, `cv_test_loglari`, `is_ilanlari`, `ilan_kriterleri`, `basvurular`, `mulakatcilar`, `mulakatlar`, `ai_soru_talepleri`, `mulakat_sorulari`. `bildirimler`, `mesajlar`, `ilan_gereksinimleri`, `sinav_oturumlari`.
