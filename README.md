@@ -38,7 +38,6 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 ## Demo
 
 
-**Demo videosu:** _[video linki]_
 
 **Demo akışı:**
 1. İşveren yalnızca "Backend stajyeri" yazar → yapay zekâ iş tanımını, becerileri, dil/eğitim/deneyim gereksinimlerini doldurur → ilan yayınlanır.
@@ -95,11 +94,10 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 
 ### Veritabanı
 
-İlk şemayı ER diyagramıyla tasarladık: [`Database/işPusulam.drawio.pdf`](Database/işPusulam.drawio.pdf)
+İlk şemayı ER diyagramıyla tasarladık: <img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/8d1fc008-7171-4065-bfc9-5821c29aa7a8" />
 
-Temel tablolar: `kullanicilar` (ortak) → `adaylar` / `isverenler` (kalıtım), `beceriler`, `aday_becerileri`, `beceri_testleri`, `test_sorulari`, `cv`, `cv_test_loglari`, `is_ilanlari`, `ilan_kriterleri`, `basvurular`, `mulakatcilar`, `mulakatlar`, `ai_soru_talepleri`, `mulakat_sorulari`.
 
-Sonradan eklenenler: `bildirimler`, `mesajlar`, `ilan_gereksinimleri`, `sinav_oturumlari`.
+ Tablolar: `kullanicilar` (ortak) → `adaylar` / `isverenler` (kalıtım), `beceriler`, `aday_becerileri`, `beceri_testleri`, `test_sorulari`, `cv`, `cv_test_loglari`, `is_ilanlari`, `ilan_kriterleri`, `basvurular`, `mulakatcilar`, `mulakatlar`, `ai_soru_talepleri`, `mulakat_sorulari`. `bildirimler`, `mesajlar`, `ilan_gereksinimleri`, `sinav_oturumlari`.
 
 ### Proje yapısı
 
@@ -138,7 +136,7 @@ isPusulam/
             └── widgets/   # ret kutusu, gereksinim listesi, ortak bileşenler
 ```
 
----
+
 
 ## Kurulum
 
@@ -160,7 +158,7 @@ psql -U postgres -d isPusulam -f "Database/bildirimlerTable(sonradanEklendi).sql
 
 Mesajlar, ilan gereksinimleri, mülakat itirazı ve AI sınavları için gereken tablolar backend ilk açıldığında `guncelleme.sql` ile **otomatik** eklenir.
 
-İsteğe bağlı: `Database/beceri_secenekleri.sql`, kataloğunuzda bulunan beceriler (Java, Spring Boot, SQL, Flutter, Python, React, Figma, İngilizce vb.) için hazır soru bankası ve iki Yetenek Görevi ekler. Becerileri ID'ye göre değil adına göre eşleştirir, iki kez çalıştırılması sorun çıkarmaz. Yapay zekâya ulaşılamadığında sınavlar bu bankadan yapılır.
+İsteğe bağlı: `Database/beceri_secenekleri.sql`, kataloğunda bulunan beceriler (Java, Spring Boot, SQL, Flutter, Python, React, Figma, İngilizce vb.) için hazır soru bankası ve iki Yetenek Görevi ekler. Becerileri ID'ye göre değil adına göre eşleştirir, iki kez çalıştırılması sorun çıkarmaz. Yapay zekâya ulaşılamadığında sınavlar bu bankadan yapılır.
 
 ### 2. Backend
 
@@ -205,14 +203,12 @@ flutter run -d chrome
 Backend adresi `lib/core/ayarlar.dart` içinde platforma göre otomatik seçilir:
 
 | Nerede çalışıyor | Adres |
-|---|---|
 | Chrome (web) | `http://localhost:8080` |
 | Android emülatör | `http://10.0.2.2:8080` |
 | Gerçek telefon | Bilgisayarın yerel IP'si, ör. `http://192.168.1.25:8080` (dosyada elle yazılır) |
 
 > Not: Sınav ve görev özelliklerini kullanmak için aday profilinde bir CV bağlantısı olmalı; sınav sonuçları CV kaydına bağlı tutulur.
 
----
 
 ## Yapay zekâ kullanımı
 
