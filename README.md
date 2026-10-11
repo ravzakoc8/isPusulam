@@ -81,13 +81,13 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 
 | Katman | Seçim | Neden |
 |---|---|---|
-| Backend | **Spring Boot 3.4, Java 17** | Takım olarak en iyi bildiğimiz dil; REST uç noktaları ve bağımlılık enjeksiyonu hazır geliyor. |
-| Veri erişimi | **JdbcTemplate (düz SQL)**, JPA yok | Şemayı ER diyagramından kendimiz tasarladık. Eşleşme, arama ve gizlilik kuralları gibi sorguları doğrudan SQL ile yazmak hem okunur hem kontrol bizde. |
-| Veritabanı | **PostgreSQL** | `ILIKE` ile büyük/küçük harf duyarsız arama, `ON CONFLICT` ile güvenli ekleme, `RETURNING` ile tek sorguda ID alma. |
-| Kimlik doğrulama | **BCrypt + HMAC-SHA256 imzalı token** | Sadece `spring-security-crypto` kullanıldı, tüm Spring Security eklenmedi. Token `kullaniciId.bitis.imza` biçiminde, 30 gün geçerli; veritabanında saklanmadığı için ek tablo gerekmiyor. İmza sabit zamanlı karşılaştırılıyor. Her uç nokta rolü (aday / işveren) sunucuda kontrol ediyor. |
-| Veritabanı güncellemesi | **Açılışta otomatik, tekrar çalıştırılabilir SQL** | `guncelleme.sql` uygulama her açıldığında çalışır, sadece eksik tablo ve sütunları ekler (`IF NOT EXISTS`). Takımdaki herkes kodu çektiğinde veritabanı kendiliğinden güncel olur. |
-| Arayüz | **Flutter + Provider** | Tek kodla web ve mobil. Oturum ve bildirim sayacı Provider ile tüm ekranlara dağıtılıyor. |
-| Yapay zekâ | **Groq üzerinde `openai/gpt-oss-120b`** | Ayrıntısı [Yapay zekâ kullanımı](#yapay-zekâ-kullanımı) bölümünde. |
+| Backend | Spring Boot 3.4, Java 17 | Takım olarak en iyi bildiğimiz dil; REST uç noktaları ve bağımlılık enjeksiyonu hazır geliyor. |
+| Veri erişimi | JdbcTemplate (düz SQL), JPA yok | Şemayı ER diyagramından kendimiz tasarladık. Eşleşme, arama ve gizlilik kuralları gibi sorguları doğrudan SQL ile yazmak hem okunur hem kontrol bizde. |
+| Veritabanı | PostgreSQL | `ILIKE` ile büyük/küçük harf duyarsız arama, `ON CONFLICT` ile güvenli ekleme, `RETURNING` ile tek sorguda ID alma. |
+| Kimlik doğrulama | BCrypt + HMAC-SHA256 imzalı token | Sadece `spring-security-crypto` kullanıldı, tüm Spring Security eklenmedi. Token `kullaniciId.bitis.imza` biçiminde, 30 gün geçerli; veritabanında saklanmadığı için ek tablo gerekmiyor. İmza sabit zamanlı karşılaştırılıyor. Her uç nokta rolü (aday / işveren) sunucuda kontrol ediyor. |
+| Veritabanı güncellemesi | Açılışta otomatik, tekrar çalıştırılabilir SQL | `guncelleme.sql` uygulama her açıldığında çalışır, sadece eksik tablo ve sütunları ekler (`IF NOT EXISTS`). Takımdaki herkes kodu çektiğinde veritabanı kendiliğinden güncel olur. |
+| Arayüz | Flutter + Provider | Tek kodla web ve mobil. Oturum ve bildirim sayacı Provider ile tüm ekranlara dağıtılıyor. |
+| Yapay zekâ | **Groq üzerinde `openai/gpt-oss-120b`
 
 ### Veritabanı
 <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/95cfe3ef-f66f-47e4-a2c2-8f917229d596" />
