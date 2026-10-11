@@ -18,8 +18,7 @@
 5. Kurulum
 6. Yapay zekâ kullanımı
 7. Takım
-8. Lisans
-
+   
 
 ## Çözdüğümüz problem
 
@@ -36,8 +35,6 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 
 
 ## Demo
-
-
 
 **Demo akışı:**
 1. İşveren yalnızca "Backend stajyeri" yazar → yapay zekâ iş tanımını, becerileri, dil/eğitim/deneyim gereksinimlerini doldurur → ilan yayınlanır.
@@ -75,8 +72,8 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 
 ### Ortak
 
-- Mesajlaşma. Aday başvurduğu şirkete, işveren kendisine başvuran adaya yazabilir. Aday adaya, işveren işverene yazamaz. Okunmamış mesaj rozeti.
-- Bildirimler. Yeni başvuru, mülakat daveti, tarih onayı/itirazı, kabul, ret ve beceri doğrulama için bildirim; menüde okunmamış sayısı.
+- Mesajlaşma: Aday başvurduğu şirkete, işveren kendisine başvuran adaya yazabilir. Aday adaya, işveren işverene yazamaz. Okunmamış mesaj özelliği.
+- Bildirimler: Yeni başvuru, mülakat daveti, tarih onayı/itirazı, kabul, ret ve beceri doğrulama için bildirim; menüde okunmamış sayısı.
 - Şirketler sayfası. Doğrulanmış işveren rozeti ve şirket başına açık ilan sayısı.
 - Tek kod tabanı, birden fazla platform. Arayüz geniş ekranda sol menü, dar ekranda alt pencere ve çekmece menüyle çalışır
 
@@ -93,7 +90,7 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 | Yapay zekâ | **Groq üzerinde `openai/gpt-oss-120b`** | Ayrıntısı [Yapay zekâ kullanımı](#yapay-zekâ-kullanımı) bölümünde. |
 
 ### Veritabanı
-<img width="400" height="200" alt="image" src="https://github.com/user-attachments/assets/95cfe3ef-f66f-47e4-a2c2-8f917229d596" />
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/95cfe3ef-f66f-47e4-a2c2-8f917229d596" />
 
 
 
@@ -156,7 +153,7 @@ psql -U postgres -d isPusulam -f Database/da.sql
 psql -U postgres -d isPusulam -f "Database/bildirimlerTable(sonradanEklendi).sql"
 ```
 
-Mesajlar, ilan gereksinimleri, mülakat itirazı ve AI sınavları için gereken tablolar backend ilk açıldığında `guncelleme.sql` ile **otomatik** eklenir.
+Mesajlar, ilan gereksinimleri, mülakat itirazı ve AI sınavları için gereken tablolar backend ilk açıldığında `guncelleme.sql` ile otomatik eklenir.
 
 İsteğe bağlı: `Database/beceri_secenekleri.sql`, kataloğunda bulunan beceriler (Java, Spring Boot, SQL, Flutter, Python, React, Figma, İngilizce vb.) için hazır soru bankası ve iki Yetenek Görevi ekler. Becerileri ID'ye göre değil adına göre eşleştirir, iki kez çalıştırılması sorun çıkarmaz. Yapay zekâya ulaşılamadığında sınavlar bu bankadan yapılır.
 
@@ -214,13 +211,13 @@ Backend adresi `lib/core/ayarlar.dart` içinde platforma göre otomatik seçilir
 
 ### Model
 
-**`openai/gpt-oss-120b`**, **Groq** üzerinden, OpenAI uyumlu `/chat/completions` arayüzüyle.
+openai/gpt-oss-120b, Groq üzerinden, OpenAI uyumlu /chat/completions arayüzüyle.
 
 ### Nerede kullanıyoruz?
 
 | Özellik | Yapay zekânın görevi | Çıktıyı nasıl denetliyoruz |
 |---|---|---|
-| İlan formunu doldurma | Pozisyon adından iş tanımı, maddeler, beceriler ve tüm gereksinimleri önermek | Eğitim, deneyim, çalışma şekli/türü ve dil seviyesi **sadece bizim sabit listelerimizden** kabul edilir; liste dışı değer atılır. Aynı beceri iki kez eklenmez. İşveren yayınlamadan önce her şeyi düzenleyebilir. |
+| İlan formunu doldurma | Pozisyon adından iş tanımı, maddeler, beceriler ve tüm gereksinimleri önermek | Eğitim, deneyim, çalışma şekli/türü ve dil seviyesi  listelerden kabul edilir; liste dışı değer atılır. Aynı beceri iki kez eklenmez. İşveren yayınlamadan önce her şeyi düzenleyebilir. |
 | Beceri sınavı | Seçilen beceri ve seviye için 4 şıklı sorular ve açıklamaları üretmek | Fazladan 2 soru istenir; 4 şıkkı olmayan, tek harfli doğru cevabı olmayan, boş şıklı veya tekrar eden sorular atılır. "A) " gibi önekler temizlenip yeniden eklenir. 5'ten az geçerli soru kalırsa sınav başlatılmaz. |
 | Yetenek Görevi | Açık uçlu cevabı ölçüte göre 0–100 puanlamak | Ölçüt (iyi bir cevabın neleri içermesi gerektiği) veritabanında bizim tarafımızdan yazılı. Puan 0–100 aralığına sıkıştırılır. |
 | Mülakat soruları | İlana özel 5 soru üretmek | Sorular kaydedilir ve tekrar kullanılır; her açılışta yeniden üretilmez. |
@@ -228,14 +225,13 @@ Backend adresi `lib/core/ayarlar.dart` içinde platforma göre otomatik seçilir
 
 ### Neden bu model ve bu sağlayıcı?
 
-- **Başta DeepSeek ile başladık.** Varsayılan "düşünme modu" yüzünden cevaplar 60 saniyeyi aşıyordu; modu kapattık, zaman aşımlarını düzenledik. Ardından ücretli bakiye gerektirmeyen bir seçenek arayıp **Groq'a geçtik** (commit geçmişinde görülebilir).
 - **Hız:** gpt-oss modellerinde `reasoning_effort: low` kullanıyoruz; 10–15 soruluk sınav bile kullanıcıyı bekletmeden üretilebiliyor.
 - **Sağlayıcıdan bağımsız:** `YapayZekaServisi` OpenAI uyumlu her servisle çalışıyor. Sağlayıcıyı değiştirmek için kod değil, sadece `ai.base-url` ve `ai.model` değişiyor. DeepSeek'e özel ayar yalnızca adres DeepSeek ise gönderiliyor.
-- **Yapılandırılmış çıktı:** Her istekte `response_format: json_object` kullanıyoruz. Model cevabı yine de ```` ```json ```` bloğuna sararsa temizleyip çözüyoruz.
+- **Yapılandırılmış çıktı:** Her istekte `response_format: json_object` kullanıyoruz. Model cevabı yine de json bloğuna sararsa temizleyip çözüyoruz.
 
-### Bilinçli olarak yapay zekâ kullanmadığımız yer: eşleşme yüzdesi
+### Yapay zekâ kullanmadığımız yer: eşleşme yüzdesi
 
-Adayı ilana eşleştiren puanı **yapay zekâya bırakmadık**, çünkü bir adayın neden üstte ya da altta göründüğü açıklanabilir olmalı. Formül basit ve açık:
+Adayı ilana eşleştiren puanı yapay zekâya bırakmadık, çünkü bir adayın neden üstte ya da altta göründüğü açıklanabilir olmalı. Formül basit ve açık:
 
 ```
 İlanın istediği her beceri için:
@@ -246,14 +242,6 @@ Eşleşme % = toplam puan / istenen beceri sayısı × 100
 ```
 
 Bu yüzden beceri doğrulamak adayın eşleşmesini doğrudan yükseltir.
-
-### Sınırlar
-
-- **Yapay zekâ hata yapabilir.** Üretilen bir sınav sorusunun doğru cevabı nadiren tartışmalı olabilir. Her sorunun açıklamasını adaya gösteriyoruz, böylece hata fark edilebilir; ama insan kontrolünden geçmiyor.
-- **Açık uçlu puanlama özneldir.** Yetenek Görevi puanı bir ölçüte bağlı olsa da aynı cevap farklı denemelerde birkaç puan farklı değerlendirilebilir.
-- **Ücretsiz kota.** Groq'un ücretsiz katmanında dakikalık istek sınırı var. Sınır aşılırsa (429) kullanıcıya Türkçe ve anlaşılır bir mesaj gösteriliyor; tüm hata kodları (401, 402, 429, 5xx) bu şekilde çevriliyor.
-- **Yedek plan.** Yapay zekâya ulaşılamazsa beceri sınavı veritabanındaki hazır soru bankasıyla devam eder ve kullanıcıya bu bildirilir. Beceri ekleme de yapay zekâ kapalıyken engellenmez, beceri "Diğer" kategorisiyle eklenir.
-- **Gizlilik.** Yapay zekâya adayın adı, iletişim bilgisi veya CV'si gönderilmiyor; yalnızca beceri adı, seviye, pozisyon ve ilan gereksinimleri gönderiliyor. (Yetenek Görevi'nde adayın yazdığı cevap metni değerlendirme için gönderilir.)
 
 ## Takım
 
