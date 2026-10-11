@@ -76,42 +76,10 @@ Bu kuralların hiçbiri sadece arayüzde değil; hepsi sunucu tarafında uygulan
 
 ### Ortak
 
-- **Mesajlaşma.** Aday başvurduğu şirkete, işveren kendisine başvuran adaya yazabilir. Aday adaya, işveren işverene yazamaz. Okunmamış mesaj rozeti.
-- **Bildirimler.** Yeni başvuru, mülakat daveti, tarih onayı/itirazı, kabul, ret ve beceri doğrulama için bildirim; menüde okunmamış sayısı.
-- **Şirketler sayfası.** Doğrulanmış işveren rozeti ve şirket başına açık ilan sayısı.
-- **Tek kod tabanı, birden fazla platform.** Arayüz geniş ekranda sol menü, dar ekranda alt pencere ve çekmece menüyle çalışır (Flutter Web ve Android).
-
----
-
-## Mimari ve teknoloji seçimleri
-
-```mermaid
-flowchart LR
-    A["Flutter<br/>(Web / Android)"] -- "REST + JSON<br/>Bearer token" --> B["Spring Boot API<br/>:8080"]
-    B -- "JdbcTemplate<br/>(düz SQL)" --> C[("PostgreSQL")]
-    B -- "OpenAI uyumlu<br/>/chat/completions" --> D["Groq<br/>gpt-oss-120b"]
-```
-
-Yapay zekâ anahtarı yalnızca sunucuda durur; Flutter uygulaması yapay zekâ servisine doğrudan hiç bağlanmaz.
-
-### Başvuru yaşam döngüsü
-
-```mermaid
-stateDiagram-v2
-    [*] --> basvuruldu
-    basvuruldu --> mulakat_planlandi : işveren tarih önerir
-    state mulakat_planlandi {
-        [*] --> planlandi
-        planlandi --> onaylandi : aday onaylar
-        planlandi --> aday_itiraz : aday itiraz eder / yeni tarih önerir
-        onaylandi --> aday_itiraz : aday sonradan itiraz eder
-        aday_itiraz --> onaylandi : işveren önerilen tarihi kabul eder
-        aday_itiraz --> planlandi : işveren yeni tarih önerir
-    }
-    mulakat_planlandi --> kabul : sadece tarih onaylıysa
-    basvuruldu --> ret : gerekçe zorunlu
-    mulakat_planlandi --> ret : gerekçe zorunlu
-```
+- Mesajlaşma. Aday başvurduğu şirkete, işveren kendisine başvuran adaya yazabilir. Aday adaya, işveren işverene yazamaz. Okunmamış mesaj rozeti.
+- Bildirimler. Yeni başvuru, mülakat daveti, tarih onayı/itirazı, kabul, ret ve beceri doğrulama için bildirim; menüde okunmamış sayısı.
+- Şirketler sayfası. Doğrulanmış işveren rozeti ve şirket başına açık ilan sayısı.
+- Tek kod tabanı, birden fazla platform. Arayüz geniş ekranda sol menü, dar ekranda alt pencere ve çekmece menüyle çalışır
 
 ### Teknoloji seçimleri ve nedenleri
 
